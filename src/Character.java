@@ -6,21 +6,20 @@ abstract public class Character{
     private int hp;
     private int agility;
     private int damage;
-    private boolean isAlive;
     private Character target;
     private final String name;
     private int lvl;
     private int gold;
-
+    private int maxHP;
 
     public Character(int hp, int agility, int damage, String name, int lvl, int gold){
         if(hp <= 0 || agility < 0 || damage <= 0 || name == null || lvl <= 0 || gold < 0)
             throw new IllegalStateException();
-        this.hp = hp;
+        maxHP = hp;
+        this.hp = maxHP;
         this.agility = agility;
         this.damage = damage;
         this.name = name;
-        isAlive = true;
         this.lvl = lvl;
         this.gold = gold;
     }
@@ -29,6 +28,9 @@ abstract public class Character{
         return hp;
     }
 
+    public boolean isAlive(){
+        return hp > 0;
+    }
 
     public void setGold(int gold) {
         this.gold = gold;
@@ -59,43 +61,47 @@ abstract public class Character{
     }
 
     public void attack(){
-        if((agility * 3) - target.agility >= Math.random() * 100 + 1){
-            System.out.println("MISS");
-        }
-        else {
-            if(agility >= Math.random() * 100 + 1){
-                target.hp -= damage * 2;
-                System.out.println("Critical hit to " + target.name + ", " + damage * 2 + " damage!");
+        int missChance = (int) (Math.random() * target.agility);
+        int critChance = (int) (Math.random() * 100);
+            if ((agility * 2) <= missChance) {
+                System.out.println(String.format("%s уклонился от удара!\n", target.getName()));
+            } else {
+                if (agility >= critChance) {
+                    target.hp -= damage * 2;
+                    System.out.println(String.format(
+                            "%s: Критический удар по %s, нанесено %d урона. Почему он все еще на ногах?\n",
+                            getName(), target.getName(), damage * 2));
+                } else {
+                    target.hp -= damage;
+                    System.out.println(String.format("%s: Удар по %s, нанесено %d урона\n",
+                            getName(), target.getName(), getDamage()));
+                }
             }
-            else
-                target.hp -= damage;
-            System.out.println("Hit to " + target.name + ", " + damage + " damage");
-        }
+        System.out.println(String.format("%s: осталось здоровья %d/%d\n", getName(), getHp(), getMaxHP()));
     }
 
-    @Override
-    public String toString(){
-        return "Name: " + name +
-                "\nLevel: " + lvl +
-                "\nHealth: " + hp +
-                "\nDamage: " + damage +
-                "\nAgility: " + agility;
+    public int getLvl() {
+        return lvl;
+    }
+
+    public int getMaxHP() {
+        return maxHP;
     }
 
     public void info(){
-        System.out.println(toString());
+        System.out.println(this);
     }
 
     public void lvlUp(int hp, int damage, int agility){
         lvl++;
-        hp += hp;
-        damage += damage;
-        agility += agility;
+        maxHP += hp;
+        this.damage += damage;
+        this.agility += agility;
+        this.hp = maxHP;
     }
 
     public void heal(int health){
         hp += health;
     }
-
 
 }

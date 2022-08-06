@@ -3,7 +3,7 @@ public class Shopkeeper {
     private String product;
 
     public Shopkeeper(){
-        product = "Health potion";
+        product = "Зелье здоровья";
     }
 
     public void menu(){
@@ -18,8 +18,8 @@ public class Shopkeeper {
         if(gold < price){
             System.out.println(String.format("""
                     У тебя проблемы с деньгами?
-                    Тебе не хватает %d - %d золотых
-                    Возвращайся когда соберешь нужную сумму""", price, gold));
+                    Тебе не хватает %d золотых
+                    Возвращайся когда соберешь нужную сумму""", (price - gold)));
             return false;
         }
         System.out.println("\nСпасибо за покупку! Что-нибудь еще?");

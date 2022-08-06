@@ -4,136 +4,199 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Player extends Character{
-    private int exp;
+public class Player extends Character {
+    private int exp, expForNextLvl;
     private int lvl;
     private Bag bag;
     private BufferedReader reader;
     private String command;
     private int maxHP;
 
-    public Player(int hp, int agility, int damage, String name){
+    public Player(int hp, int agility, int damage, String name) {
         super(hp, agility, damage, name, 1, 0);
         exp = 0;
         bag = new Bag();
         reader = new BufferedReader(new InputStreamReader(System.in));
-        maxHP = 100;
+        maxHP = hp;
+        expForNextLvl = 100;
     }
 
-    public void lookInBag()throws IOException {
-        System.out.println("\n“˚ ÓÚÍ˚Î ˛ÍÁ‡Í, ‡ Ú‡Ï...");
-        bagInfo();
-        System.out.println("""
-                ◊ÚÓ·˚ ‰ÓÒÚ‡Ú¸ ÔÂ‰ÏÂÚ - ‚˚·ÂË Â„Ó ËÌ‰ÂÍÒ
-                4 - ‚˚ÈÚË ËÁ ÏÂÌ˛""");
-        String command = reader.readLine();
-        String thing;
-        switch (command){
-            case "0" -> {
-                thing = takeFromBag(0);
-                break;
-            }
-            case "1" -> {
-                thing = takeFromBag(1);
-                break;
-            }
-            case "2" -> {
-                thing = takeFromBag(2);
-                break;
-            }
-            case "3" -> {
-                thing = takeFromBag(3);
-                break;
-            }
-            case "4" -> {
-                break;
-            }
-            default -> {
-                System.out.println("“˚ ÌÂ ÔÓÔ‡Î ÔÓ ÍÌÓÔÍÂ, ÔÓÔÓ·ÛÈ Â˘Â ‡Á");
-                lookInBag();
+    @Override
+    public String toString() {
+        return String.format("""
+                –ò–º—è: %s
+                –£—Ä–æ–≤–µ–Ω—å: %d
+                –ó–¥–æ—Ä–æ–≤—å–µ: %d/%d
+                –ù–∞–Ω–æ—Å–∏–º—ã–π —É—Ä–æ–Ω: %d
+                –õ–æ–≤–∫–æ—Å—Ç—å: %d
+                –ó–æ–ª–æ—Ç–æ: %d
+                –¢–µ–∫—É—â–∏–π —É—Ä–æ–≤–µ–Ω—å –æ–ø—ã—Ç–∞: %d/%d
+                """, getName(), getLvl(), getHp(), getMaxHP(), getDamage(), getAgility(), getGold(), exp, expForNextLvl);
+    }
+
+    public void openBag() throws IOException {
+        System.out.println("\n–¢—ã –æ—Ç–∫—Ä—ã–ª —Ä—é–∫–∑–∞–∫, –∞ —Ç–∞–º...");
+        if(bag.bag.size() == 0){
+            System.out.println("–ü—É—Å—Ç–æ, –≤ —Ç–≤–æ–µ–º —Ä—é–∫–∑–∞–∫–µ –º—ã—à—å –ø–æ–≤–µ—Å–∏–ª–∞—Å—å, –Ω–∞–¥–æ –±—ã —á—Ç–æ-–Ω–∏–±—É–¥—å –ø—Ä–∏–∫—É–ø–∏—Ç—å...");
+            System.out.println("0 - –∑–∞–∫—Ä—ã—Ç—å —Ä—é–∫–∑–∞–∫");
+            command = reader.readLine();
+            while (!command.equals("0")){
+                System.out.println("–ù—É–∂–Ω–æ –Ω–∞–∂–∞—Ç—å 0!");
+                command = reader.readLine();
             }
         }
+        else {
+            String thing = null;
+            String command = "";
+            while (!command.equals("4")) {
+                System.out.println("""
+                        –ß—Ç–æ–±—ã –¥–æ—Å—Ç–∞—Ç—å –ø—Ä–µ–¥–º–µ—Ç - –≤—ã–±–µ—Ä–∏ –µ–≥–æ –∏–Ω–¥–µ–∫—Å
+                        4 - –≤—ã–π—Ç–∏ –∏–∑ –º–µ–Ω—é""");
+                bagInfo();
+                command = reader.readLine();
+                switch (command) {
+                    case "0" -> {
+                        thing = takeFromBag(0);
+                    }
+                    case "1" -> {
+                        thing = takeFromBag(1);
+                    }
+                    case "2" -> {
+                        thing = takeFromBag(2);
+                    }
+                    case "3" -> {
+                        thing = takeFromBag(3);
+                    }
+                    default -> {
+                        System.out.println("–¢—ã –Ω–µ –ø–æ–ø–∞–ª –ø–æ –∫–Ω–æ–ø–∫–µ, –ø–æ–ø—Ä–æ–±—É–π –µ—â–µ —Ä–∞–∑");
+                    }
+                }
+            }
+            if (thing != null) {
+                useItem(thing);
+            }
+        }
+    }
+
+    public void useItem(String item) throws IOException {
         System.out.println("""
-                0 - ‚˚·ÓÒËÚ¸ ÔÂ‰ÏÂÚ
-                1 - ËÒÔÓÎ¸ÁÓ‚‡Ú¸ ÔÂ‰ÏÂÚ""");
+                    0 - –≤—ã–±—Ä–æ—Å–∏—Ç—å –ø—Ä–µ–¥–º–µ—Ç
+                    1 - –∏—Å–ø–æ–ª—å–∑–æ–≤–∞—Ç—å –ø—Ä–µ–¥–º–µ—Ç""");
         command = reader.readLine();
-        switch (command){
+        switch (command) {
             case "0" -> {
-                System.out.println("\n“˚ ‚˚·ÓÒËÎ ÔÂ‰ÏÂÚ ‚ ÍÛÒÚ˚...ÃÓÊÂÚ ·˚Ú¸ ÒÚÓËÎÓ ÔÓËÒÍ‡Ú¸ ÏÛÒÓÍÛ?");
+                System.out.println("\n–¢—ã –≤—ã–±—Ä–æ—Å–∏–ª –ø—Ä–µ–¥–º–µ—Ç –≤ –∫—É—Å—Ç—ã...–ú–æ–∂–µ—Ç –±—ã—Ç—å —Å—Ç–æ–∏–ª–æ –ø–æ–∏—Å–∫–∞—Ç—å –º—É—Å–æ—Ä–∫—É?");
             }
             case "1" -> {
                 drinkPotion();
             }
+            default -> {
+                System.out.println("–ù–µ —Ç–∞ –∫–æ–º–∞–Ω–¥–∞");
+                useItem(item);
+            }
         }
     }
 
-    public boolean isFreeSpaceBag(){
+    public boolean isFreeSpaceBag() {
         return bag.bag.size() <= 4;
     }
 
-    public boolean putInBag(String thing){
+    public void lootMonster(Character character) {
+        setGold(getGold() + character.getGold());
+        exp += 10 + (character.getLvl() * 10);
+        System.out.println(String.format("""
+                                
+                –ü–æ–ª—É—á–µ–Ω–æ –æ–ø—ã—Ç–∞: %d
+                –ü–æ–ª—É—á–µ–Ω–æ –∑–æ–ª–æ—Ç–∞: %d
+                """, 10 + (character.getLvl() * 10), character.getGold()));
+        nextLvl();
+    }
+
+    public boolean putInBag(String thing) {
         return bag.putInBag(thing);
     }
-    
-    public void buy(int price){
+
+    public void buy(int price) {
         setGold(getGold() - price);
     }
 
-    public void drinkPotion(){
+    public void drinkPotion() {
         if (getHp() <= maxHP) {
             heal(15);
             System.out.println("""
-                    ¬˚ ‚˚ÔËÎË Í‡ÍÛ˛-ÚÓ ÊË‰ÍÓÒÚ¸, Ì‡ÔÓÏËÌ‡˛˘ÂÂ ÁÂÎ¸Â Á‰ÓÓ‚¸ˇ...
-                     ‡ÊÂÚÒˇ ‚‡Ï ÒÚ‡ÎÓ ÎÛ˜¯Â...""");
-            if(getHp() > maxHP){
+                    –í—ã –≤—ã–ø–∏–ª–∏ –∫–∞–∫—É—é-—Ç–æ –∂–∏–¥–∫–æ—Å—Ç—å, –Ω–∞–ø–æ–º–∏–Ω–∞—é—â–µ–µ –∑–µ–ª—å–µ –∑–¥–æ—Ä–æ–≤—å—è...
+                    –ö–∞–∂–µ—Ç—Å—è –≤–∞–º —Å—Ç–∞–ª–æ –ª—É—á—à–µ...""");
+            if (getHp() > maxHP) {
                 int dif = getHp() - maxHP;
                 heal(-dif);
             }
-            System.out.println("\n”Ó‚ÂÌ¸ Á‰ÓÓ‚¸ˇ ÚÂÔÂ¸ ‡‚ÂÌ¸ " + getHp());
-        }
-        else
-            System.out.println("\n“‚ÓÈ ÛÓ‚ÂÌ¸ Á‰ÓÓ‚¸ˇ ‡‚ÂÌ " + getHp()
-            + "\n«‰ÓÓ‚ÂÂ ÚÂ·Â ÛÊÂ ÌÂ ÒÚ‡Ú¸");
+            System.out.println("\n–£—Ä–æ–≤–µ–Ω—å –∑–¥–æ—Ä–æ–≤—å—è —Ç–µ–ø–µ—Ä—å —Ä–∞–≤–µ–Ω—å " + getHp() + "/" + maxHP);
+        } else
+            System.out.println("\n–¢–≤–æ–π —É—Ä–æ–≤–µ–Ω—å –∑–¥–æ—Ä–æ–≤—å—è —Ä–∞–≤–µ–Ω " + getHp()
+                    + "\n–ó–¥–æ—Ä–æ–≤–µ–µ —Ç–µ–±–µ —É–∂–µ –Ω–µ —Å—Ç–∞—Ç—å");
     }
 
-    public String takeFromBag(int index){
+    public String takeFromBag(int index) {
         return bag.takeFromBag(index);
     }
 
-    public void bagInfo(){
+    public void info(){
+        command = "";
+        super.info();
+        while (!command.equals("0")){
+            System.out.println("0 - –∑–∞–∫—Ä—ã—Ç—å –º–µ–Ω—é");
+            try {
+                command = reader.readLine();
+            }
+            catch (IOException e){
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void bagInfo() {
         bag.info();
     }
 
-    public void lvlUp(){
-        super.lvlUp(maxHP + 7, 4, 4);
+    public void isNewLvl() {
+        if (exp >= expForNextLvl) {
+            super.lvlUp(7, 4, 4);
+            exp -= expForNextLvl;
+            expForNextLvl += expForNextLvl / 2;
+            System.out.println("–ü–æ–ª—É—á–µ–Ω –Ω–æ–≤—ã–π —É—Ä–æ–≤–µ–Ω—å!\n");
+        }
+
     }
 
-    private class Bag{
+    public void nextLvl() {
+        System.out.println(String.format("–î–æ —Å–ª–µ–¥—É—é—â–µ–≥–æ —É—Ä–æ–≤–Ω—è –æ—Å—Ç–∞–ª–æ—Å—å %d/%d\n", exp, expForNextLvl));
+    }
+
+    private class Bag {
         List<String> bag;
 
-        Bag(){
+        Bag() {
             bag = new ArrayList<>();
         }
 
-        boolean putInBag(String thing){
-            if(bag.size() > 4){
+        boolean putInBag(String thing) {
+            if (bag.size() > 4) {
                 return false;
-            }
-            else {
+            } else {
                 bag.add(thing);
                 return true;
             }
         }
 
-        String takeFromBag(int index){
+        String takeFromBag(int index) {
             return bag.remove(index);
         }
 
-        void info(){
-            bag.forEach(thing -> 
-                System.out.println(bag.indexOf(thing) + ": " + thing)
+        void info() {
+            bag.forEach(thing ->
+                    System.out.println(bag.indexOf(thing) + ": " + thing)
             );
-            System.out.println("«‡ÌˇÚÓ " + bag.size() + "/4");        
+            System.out.println("–ó–∞–Ω—è—Ç–æ " + bag.size() + "/4");
         }
     }
 
