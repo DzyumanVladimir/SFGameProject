@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.List;
-
-abstract public class Character{
+abstract public class Character {
 
     private int hp;
     private int agility;
@@ -10,10 +7,10 @@ abstract public class Character{
     private final String name;
     private int lvl;
     private int gold;
-    private int maxHP;
+    private int maxHP; //Максимальный уровень здоровья, фиксированный показатель, который растет с повышением уровня
 
-    public Character(int hp, int agility, int damage, String name, int lvl, int gold){
-        if(hp <= 0 || agility < 0 || damage <= 0 || name == null || lvl <= 0 || gold < 0)
+    public Character(int hp, int agility, int damage, String name, int lvl, int gold) {
+        if (hp <= 0 || agility < 0 || damage <= 0 || name == null || lvl <= 0 || gold < 0)
             throw new IllegalStateException();
         maxHP = hp;
         this.hp = maxHP;
@@ -28,7 +25,7 @@ abstract public class Character{
         return hp;
     }
 
-    public boolean isAlive(){
+    public boolean isAlive() {
         return hp > 0;
     }
 
@@ -48,36 +45,33 @@ abstract public class Character{
         return damage;
     }
 
-    public String getName(){
+    public String getName() {
         return name;
     }
 
-    public void takeTarget(Character character){
+    public void takeTarget(Character character) { //Выбор цели для атаки
         target = character;
     }
 
-    public Character getTarget(){
-        return target;
-    }
-
-    public void attack(){
-        int missChance = (int) (Math.random() * target.agility);
-        int critChance = (int) (Math.random() * 100);
-            if ((agility * 2) <= missChance) {
-                System.out.println(String.format("%s уклонился от удара!\n", target.getName()));
+    public void attack() {
+        int missChance = (int) (Math.random() * target.agility); //вероятность промаха
+        int critChance = (int) (Math.random() * 100); //вероятность критического удара
+        if ((agility * 2) <= missChance) {
+            System.out.printf("%s уклонился от удара!\n%n", target.getName());
+        } else {
+            if (agility >= critChance) {
+                target.hp -= damage * 2;
+                System.out.printf(
+                        "%s: Критический удар по %s, нанесено %d урона. Почему он все еще на ногах?\n%n",
+                        getName(), target.getName(), damage * 2);
             } else {
-                if (agility >= critChance) {
-                    target.hp -= damage * 2;
-                    System.out.println(String.format(
-                            "%s: Критический удар по %s, нанесено %d урона. Почему он все еще на ногах?\n",
-                            getName(), target.getName(), damage * 2));
-                } else {
-                    target.hp -= damage;
-                    System.out.println(String.format("%s: Удар по %s, нанесено %d урона\n",
-                            getName(), target.getName(), getDamage()));
-                }
+                target.hp -= damage;
+                System.out.printf("%s: Удар по %s, нанесено %d урона\n%n",
+                        getName(), target.getName(), getDamage());
             }
-        System.out.println(String.format("%s: осталось здоровья %d/%d\n", getName(), getHp(), getMaxHP()));
+        }
+        System.out.printf("%s: осталось здоровья %d/%d\n%n", getName(), getHp(), getMaxHP());
+        System.out.println("==================================================================");
     }
 
     public int getLvl() {
@@ -88,11 +82,11 @@ abstract public class Character{
         return maxHP;
     }
 
-    public void info(){
+    public void info() {
         System.out.println(this);
     }
 
-    public void lvlUp(int hp, int damage, int agility){
+    public void lvlUp(int hp, int damage, int agility) {
         lvl++;
         maxHP += hp;
         this.damage += damage;
@@ -100,7 +94,7 @@ abstract public class Character{
         this.hp = maxHP;
     }
 
-    public void heal(int health){
+    public void heal(int health) {
         hp += health;
     }
 
