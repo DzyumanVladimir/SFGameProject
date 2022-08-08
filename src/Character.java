@@ -49,6 +49,14 @@ abstract public class Character {
         return name;
     }
 
+    public int getLvl() {
+        return lvl;
+    }
+
+    public int getMaxHP() {
+        return maxHP;
+    }
+
     public void takeTarget(Character character) { //Выбор цели для атаки
         target = character;
     }
@@ -56,7 +64,7 @@ abstract public class Character {
     public void attack() {
         int missChance = (int) (Math.random() * target.agility); //вероятность промаха
         int critChance = (int) (Math.random() * 100); //вероятность критического удара
-        if ((agility * 2) <= missChance) {
+        if ((agility * 2) < missChance) {
             System.out.printf("%s уклонился от удара!\n%n", target.getName());
         } else {
             if (agility >= critChance) {
@@ -74,14 +82,6 @@ abstract public class Character {
         System.out.println("==================================================================");
     }
 
-    public int getLvl() {
-        return lvl;
-    }
-
-    public int getMaxHP() {
-        return maxHP;
-    }
-
     public void info() {
         System.out.println(this);
     }
@@ -96,6 +96,11 @@ abstract public class Character {
 
     public void heal(int health) {
         hp += health;
+    }
+
+    @Override
+    public String toString(){
+        return name;
     }
 
 }

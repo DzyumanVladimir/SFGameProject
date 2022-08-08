@@ -11,7 +11,7 @@ public class Player extends Character {
     private String command; //команды для управления героем
 
     public Player(int hp, int agility, int damage, String name) {
-        super(hp, agility, damage, name, 1, 1000);
+        super(hp, agility, damage, name, 1, 0);
         exp = 0;
         bag = new Bag();
         reader = new BufferedReader(new InputStreamReader(System.in));
@@ -67,8 +67,8 @@ public class Player extends Character {
                         int index = Integer.parseInt(command) - 1;
                         if (index < 0 || index >= getBagSize()) {
                             System.out.println("Такого номера нет");
-                        } else if (useItem())
-                            takeFromBag(index);
+                        } else if (useItem()) //true - если предмет был использован
+                            takeFromBag(index); //удаляет предмет из инвентаря
                     } catch (NumberFormatException e) {
                         System.out.println("Введи номер предмета, который хочешь взять");
                     }
@@ -110,7 +110,7 @@ public class Player extends Character {
 
     public void lootMonster(Character character) {
         setGold(getGold() + character.getGold());
-        exp += 10 + (character.getLvl() * 10);
+        exp += 10 + (character.getLvl() * 10); //чем больше уровень противника, тем больше мы получаем за него опыта
         System.out.printf("""
                                 
                 Получено опыта: %d
@@ -138,8 +138,8 @@ public class Player extends Character {
                 Вы выпили какую-то жидкость, напоминающее зелье здоровья...
                 Кажется вам стало лучше...""");
         if (getHp() > getMaxHP()) {
-            int dif = getHp() - getMaxHP();
-            heal(-dif);
+            int dif = getMaxHP() - getHp();
+            heal(dif);
         }
         System.out.println("Уровень здоровья теперь равен " + getHp() + "/" + getMaxHP());
     }
@@ -170,7 +170,7 @@ public class Player extends Character {
         if (exp >= expForNextLvl) {
             super.lvlUp(7, 4, 4);
             exp -= expForNextLvl;
-            expForNextLvl += expForNextLvl / 2;
+            expForNextLvl += expForNextLvl / 2; //С каждым уровнем растет количество опыта, необходимое для достижения след. уровня
             System.out.println("Получен новый уровень!\n");
         }
     }

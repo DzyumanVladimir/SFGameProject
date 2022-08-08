@@ -11,10 +11,4 @@ public class Goblin extends Character {
         super.lvlUp(4, 2, 6);
         setGold(getGold() + ((int) ((Math.random() + 1) * getLvl()))); //количество золота у противника зависит от его уровня
     }
-
-    @Override
-    public String toString() {
-        return String.format("""
-                Гоблин %d уровня""", getLvl());
-    }
 }
